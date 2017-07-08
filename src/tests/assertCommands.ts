@@ -1,5 +1,5 @@
 import { expect } from 'chai'
-import { Event, Command, ApplyCommand, ApplyEvents, Food } from '../model'
+import { Event, Command, ApplyCommand, ApplyEvents, Food, nullState } from '../model'
 
 export interface EventModel {
     applyCommand: ApplyCommand
@@ -20,8 +20,7 @@ const synchDatetime = (arr: Event<any>[]) => arr.map(e => {
 })
 export const createAssertCommand = (model: EventModel): AssertCommand => {
     return async (params) => {
-        const initialState = {name: ''}
-        const state = model.applyEvents(initialState, params.before)
+        const state = model.applyEvents(nullState, params.before)
         const newEvents: Event<any>[] = []
         await params.commands.reduce(async (statePromise, command) => {
             const evt = await model.applyCommand(await statePromise, command)
