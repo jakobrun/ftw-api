@@ -9,11 +9,13 @@ export interface Event<T> {
 }
 
 export interface Food {
+    id: string
     name: string
     active: boolean
 }
 
 export const nullState: Food = {
+    id: '',
     name: '',
     active: false
 }
@@ -83,6 +85,7 @@ const applyEvent = (state: Food, event: Event<any>): Food => {
     switch (event.type) {
         case 'foodAdded':
             return {
+                id: event.aggregateId,
                 name: event.data.name,
                 active: true
             }
