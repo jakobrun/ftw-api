@@ -1,7 +1,7 @@
-import { Food, Event } from './model'
-export type ApplyEvent = (state: Food[], event:Event<any>) => Food[]
+import { ApplyEvent } from './events'
+import { Food } from './model'
 
-export const applyEvent: ApplyEvent = (state, event) => {
+export const applyEvent: ApplyEvent<Food[]> = (state, event) => {
     switch (event.type) {
         case 'foodAdded':
             return [...state, {

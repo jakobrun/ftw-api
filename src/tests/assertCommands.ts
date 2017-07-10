@@ -1,31 +1,32 @@
 import { expect } from 'chai'
-import { Event, Command, ApplyCommand, ApplyEvents, Food, nullState } from '../model'
+import { DomainEvent, ApplyEvent } from '../events'
+import { Command, ApplyCommand, Food, nullState } from '../model'
 
 export interface EventModel {
     applyCommand: ApplyCommand
-    applyEvents: ApplyEvents
+    applyEvent: ApplyEvent<Food>
 }
 export interface AssertCommandParams {
-    before: Event<any>[]
+    before: DomainEvent<any>[]
     commands: Command[]
-    after: Event<any>[]
+    after: DomainEvent<any>[]
 }
 
 export type AssertCommand = (params: AssertCommandParams) => Promise<void>
 
 const datetime = new Date()
-const synchDatetime = (arr: Event<any>[]) => arr.map(e => {
+const synchDatetime = (arr: DomainEvent<any>[]) => arr.map(e => {
     e.datetime = datetime
     return e
 })
 export const createAssertCommand = (model: EventModel): AssertCommand => {
     return async (params) => {
-        const state = model.applyEvents(nullState, params.before)
-        const newEvents: Event<any>[] = []
+        const state = params.before.reduce(model.applyEvent, nullState)
+        const newEvents: DomainEvent<any>[] = []
         await params.commands.reduce(async (statePromise, command) => {
             const evt = await model.applyCommand(await statePromise, command)
             evt.map(e => newEvents.push(e))
-            return model.applyEvents(state, evt);
+            return evt.reduce(model.applyEvent, state)
         }, Promise.resolve(state))
         expect(synchDatetime(newEvents)).to.eql(synchDatetime(params.after))
     }

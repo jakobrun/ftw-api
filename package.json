@@ -12,7 +12,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.15.3"
+    "express": "^4.15.3",
+    "pg-promise": "^6.3.2"
   },
   "devDependencies": {
     "@types/chai": "^4.0.1",

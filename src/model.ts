@@ -1,13 +1,4 @@
-
-export interface Event<T> {
-    type: string
-    id: string
-    aggregateId: string
-    data: T
-    datetime: Date
-    username: string
-}
-
+import { DomainEvent, ApplyEvent } from './events'
 export interface Food {
     id: string
     name: string
@@ -20,9 +11,7 @@ export const nullState: Food = {
     active: false
 }
 
-export type ApplyCommand = (state: Food, commands: Command) => Promise<Event<any>[]>
-
-export type ApplyEvents = (state: Food, events: Event<any>[]) => Food
+export type ApplyCommand = (state: Food, commands: Command) => Promise<DomainEvent<any>[]>
 
 export interface AddFoodCommand {
     type: 'addFood'
@@ -52,7 +41,7 @@ export const applyCommand: ApplyCommand = (state, command) => {
                 type: 'foodAdded',
                 id: command.id,
                 aggregateId: command.id,
-                username: '',
+                userid: '',
                 datetime: new Date(),
                 data: {
                     name: command.name
@@ -63,7 +52,7 @@ export const applyCommand: ApplyCommand = (state, command) => {
                 type: 'foodRenamed',
                 id: command.id,
                 aggregateId: command.aggregateId,
-                username: '',
+                userid: '',
                 datetime: new Date(),
                 data: {
                     name: command.name
@@ -74,14 +63,14 @@ export const applyCommand: ApplyCommand = (state, command) => {
                 type: 'foodDeleted',
                 id: command.id,
                 aggregateId: command.aggregateId,
-                username: '',
+                userid: '',
                 datetime: new Date(),
                 data: {}
             }])        
     }
 }
 
-const applyEvent = (state: Food, event: Event<any>): Food => {
+export const applyEvent: ApplyEvent<Food> = (state, event) => {
     switch (event.type) {
         case 'foodAdded':
             return {
@@ -102,4 +91,3 @@ const applyEvent = (state: Food, event: Event<any>): Food => {
         default: throw new Error('unknown event: ' + event.type)
     }
 }
-export const applyEvents: ApplyEvents = (state, events) => events.reduce(applyEvent, state)

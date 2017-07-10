@@ -1,10 +1,10 @@
-import { Event } from '../model'
+import { DomainEvent } from '../events'
 import { applyEvent } from '../foodList'
 import { expect } from 'chai'
 
 describe('food list', () => {
     it('should create list from events', () => {
-        const events: Event<any>[] = [{
+        const events: DomainEvent<any>[] = [{
             type: 'foodAdded',
             id: '1',
             aggregateId: '1',
@@ -12,7 +12,7 @@ describe('food list', () => {
                 name: 'Fasta'
             },
             datetime: new Date(),
-            username: ''
+            userid: ''
         }, {
             type: 'foodAdded',
             id: '2',
@@ -21,7 +21,7 @@ describe('food list', () => {
                 name: 'Pizza'
             },
             datetime: new Date(),
-            username: ''
+            userid: ''
         }, {
             type: 'foodAdded',
             id: '3',
@@ -30,7 +30,7 @@ describe('food list', () => {
                 name: 'Meet balls'
             },
             datetime: new Date(),
-            username: ''
+            userid: ''
         }, {
             type: 'foodRenamed',
             id: '4',
@@ -39,14 +39,14 @@ describe('food list', () => {
                 name: 'Pasta'
             },
             datetime: new Date(),
-            username: ''
+            userid: ''
         }, {
             type: 'foodDeleted',
             id: '5',
             aggregateId: '3',
             data: {},
             datetime: new Date(),
-            username: ''
+            userid: ''
         }]
 
         const foodList = events.reduce(applyEvent, [])

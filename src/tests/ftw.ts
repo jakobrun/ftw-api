@@ -1,9 +1,10 @@
-import { applyCommand, applyEvents, Event } from '../model'
+import { DomainEvent } from '../events'
+import { applyCommand, applyEvent } from '../model'
 import { createAssertCommand } from './assertCommands'
 
-const assertCommands = createAssertCommand({ applyCommand, applyEvents })
+const assertCommands = createAssertCommand({ applyCommand, applyEvent })
 
-const emptyEventList: Event<any>[] = []
+const emptyEventList: DomainEvent<any>[] = []
 
 describe('ftw', () => {
     it('should add food', () => assertCommands({
@@ -16,7 +17,7 @@ describe('ftw', () => {
         after: [{
             id: '1',
             aggregateId: '1',
-            username: '',
+            userid: '',
             datetime: new Date(),
             type: 'foodAdded',
             data: {
@@ -28,7 +29,7 @@ describe('ftw', () => {
         before: [{
             id: '1',
             aggregateId: '1',
-            username: '',
+            userid: '',
             datetime: new Date(),
             type: 'foodAdded',
             data: {
@@ -44,7 +45,7 @@ describe('ftw', () => {
         after: [{
             id: '2',
             aggregateId: '1',
-            username: '',
+            userid: '',
             datetime: new Date(),
             type: 'foodRenamed',
             data: {
@@ -57,7 +58,7 @@ describe('ftw', () => {
         before: [{
             id: '1',
             aggregateId: '1',
-            username: '',
+            userid: '',
             datetime: new Date(),
             type: 'foodAdded',
             data: {
@@ -72,7 +73,7 @@ describe('ftw', () => {
         after: [{
             id: '2',
             aggregateId: '1',
-            username: '',
+            userid: '',
             datetime: new Date(),
             type: 'foodDeleted',
             data: {}
