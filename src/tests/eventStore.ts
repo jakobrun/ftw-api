@@ -1,19 +1,14 @@
 import { DomainEvent, EventStore } from '../events'
 import { createEventStore } from '../eventStore'
 import { expect } from 'chai'
-import * as pgPromise from 'pg-promise'
-
-const connecionOptions = {
-    database: 'ftw_test'
-}
-const db = pgPromise()(connecionOptions)
+import { db } from './db'
 
 const store: EventStore = createEventStore(db)
 
 describe('event store', () => {
-    beforeEach(() => {
-        return db.none('delete from event')
-    })
+
+    beforeEach(() => db.none('delete from event'))
+
     it('should store events', async () => {
         const events1: DomainEvent<any>[] = [{
             type: 'a',
@@ -60,6 +55,12 @@ describe('event store', () => {
 
         expect(e1).to.eql(events1)
         expect(e2).to.eql(events2)
+
+    })
+
+    it('should return empty array if no events found', async () => {
+        const e = await store.findByAggregateId('1')
+        expect(e).to.eql([]);
 
     })
 })

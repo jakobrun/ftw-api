@@ -1,17 +1,9 @@
-import * as express from 'express'
-const app = express()
+import { createApp } from './app'
+import * as pgPromise from 'pg-promise'
 
-const api = express.Router()
-api.get('/foodlist', (_req: any, res: express.Response) => {
-    res.json([{
-        name: 'Tortilla',
-        description: ''
-    }, {
-        name: 'Pasta',
-        description: ''
-    }])
-})
+const connecionOptions = {
+    database: 'ftw'
+}
+const db = pgPromise()(connecionOptions)
 
-app.use('/api/v1', api)
-
-app.listen(3000)
+createApp(db).listen(3000)

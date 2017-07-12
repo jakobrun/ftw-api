@@ -15,7 +15,7 @@ export type ApplyCommand = (state: Food, commands: Command) => Promise<DomainEve
 
 export interface AddFoodCommand {
     type: 'addFood'
-    id: string
+    aggregateId: string
     name: string
 }
 
@@ -39,8 +39,8 @@ export const applyCommand: ApplyCommand = (state, command) => {
         case 'addFood':
             return Promise.resolve([{
                 type: 'foodAdded',
-                id: command.id,
-                aggregateId: command.id,
+                id: command.aggregateId,
+                aggregateId: command.aggregateId,
                 userid: '',
                 datetime: new Date(),
                 data: {

@@ -11,7 +11,7 @@ describe('ftw', () => {
         before: emptyEventList,
         commands: [{
             type: 'addFood',
-            id: '1',
+            aggregateId: '1',
             name: 'Pasta'
         }],
         after: [{
