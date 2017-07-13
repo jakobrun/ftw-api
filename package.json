@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node dist",
     "test": "mocha dist/tests",
-    "build": "tsc"
+    "build": "tsc",
+    "postinstall": "npm run build"
   },
   "keywords": [],
   "author": "",
@@ -14,7 +15,8 @@
   "dependencies": {
     "body-parser": "^1.17.2",
     "express": "^4.15.3",
-    "pg-promise": "^6.3.2"
+    "pg-promise": "^6.3.2",
+    "typescript": "^2.4.1"
   },
   "devDependencies": {
     "@types/body-parser": "^1.16.4",
@@ -25,7 +27,6 @@
     "@types/supertest": "^2.0.2",
     "chai": "^4.0.2",
     "mocha": "^3.4.2",
-    "supertest": "^3.0.0",
-    "typescript": "^2.4.1"
+    "supertest": "^3.0.0"
   }
 }
