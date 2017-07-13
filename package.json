@@ -9,6 +9,9 @@
     "build": "tsc",
     "postinstall": "npm run build"
   },
+  "engines": {
+    "node": "6.11.x"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
