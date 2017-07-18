@@ -13,7 +13,8 @@ import * as expressSession from 'express-session'
 passport.use(new Strategy({
     clientID: process.env.FTW_FB_APP_ID || 'test',
     clientSecret: process.env.FTW_FB_APP_SECRET || 'test',
-    callbackURL: 'https://ftw-app.herokuapp.com/login/facebook/return'
+    callbackURL: 'https://ftw-app.herokuapp.com/login/facebook/return',
+    profileFields: ['id', 'displayName', 'photos', 'email']
 },
     function (accessToken, refreshToken, profile, cb) {
         return cb(null, profile);
