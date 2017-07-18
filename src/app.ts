@@ -39,7 +39,9 @@ export const createApp = (db: pgPromise.IDatabase<any>) => {
         res.json({ login: 'facebook', url: '/login/facebook' })
     })
 
-    app.get('/login/facebook', passport.authenticate('facebook'))
+    app.get('/login/facebook', passport.authenticate('facebook', {
+        scope: ['email', 'user_relationships']
+    }))
 
     app.get('/login/facebook/return',
         passport.authenticate('facebook', {
