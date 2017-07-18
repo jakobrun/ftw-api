@@ -1,14 +1,11 @@
-import { DomainEvent } from '../events'
-import { applyCommand, applyEvent } from '../model'
+import { applyCommand, applyEvent, nullState } from '../model'
 import { createAssertCommand } from './assertCommands'
 
-const assertCommands = createAssertCommand({ applyCommand, applyEvent })
-
-const emptyEventList: DomainEvent<any>[] = []
+const assertCommands = createAssertCommand({ applyCommand, applyEvent, nullState })
 
 describe('ftw', () => {
     it('should add food', () => assertCommands({
-        before: emptyEventList,
+        before: [],
         commands: [{
             type: 'addFood',
             aggregateId: '1',

@@ -1,33 +1,42 @@
 import { expect } from 'chai'
 import { DomainEvent, ApplyEvent } from '../events'
-import { Command, ApplyCommand, Food, nullState } from '../model'
 
-export interface EventModel {
-    applyCommand: ApplyCommand
-    applyEvent: ApplyEvent<Food>
+export type ApplyCommand<S, C> = (state: S, command: C) => Promise<DomainEvent<any>[]>
+export interface EventModel<S, C> {
+    applyCommand: ApplyCommand<S, C>
+    applyEvent: ApplyEvent<any>
+    nullState: S
 }
-export interface AssertCommandParams {
+export interface AssertCommandParams<C> {
     before: DomainEvent<any>[]
-    commands: Command[]
+    commands: C[]
     after: DomainEvent<any>[]
+    errorMessage?: string
 }
 
-export type AssertCommand = (params: AssertCommandParams) => Promise<void>
+export type AssertCommand<C> = (params: AssertCommandParams<C>) => Promise<void>
 
 const datetime = new Date()
 const synchDatetime = (arr: DomainEvent<any>[]) => arr.map(e => {
     e.datetime = datetime
     return e
 })
-export const createAssertCommand = (model: EventModel): AssertCommand => {
+export const createAssertCommand = <S, C>(model: EventModel<S, C>): AssertCommand<C> => {
     return async (params) => {
-        const state = params.before.reduce(model.applyEvent, nullState)
+        const state = params.before.reduce(model.applyEvent, model.nullState)
         const newEvents: DomainEvent<any>[] = []
-        await params.commands.reduce(async (statePromise, command) => {
-            const evt = await model.applyCommand(await statePromise, command)
-            evt.map(e => newEvents.push(e))
-            return evt.reduce(model.applyEvent, state)
-        }, Promise.resolve(state))
+        let errorMessage
+        try {
+            await params.commands.reduce(async (statePromise, command) => {
+                const currentState = await statePromise
+                const evt = await model.applyCommand(currentState, command)
+                evt.map(e => newEvents.push(e))
+                return evt.reduce(model.applyEvent, currentState)
+            }, Promise.resolve(state))
+        } catch (err) {
+            errorMessage = err.message
+        }
         expect(synchDatetime(newEvents)).to.eql(synchDatetime(params.after))
+        expect(params.errorMessage).to.eq(errorMessage)
     }
 }

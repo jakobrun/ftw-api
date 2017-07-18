@@ -11,8 +11,8 @@ import * as cookieParser from 'cookie-parser'
 import * as expressSession from 'express-session'
 
 passport.use(new Strategy({
-    clientID: process.env.FTW_FB_APP_ID || '',
-    clientSecret: process.env.FTW_FB_APP_SECRET || '',
+    clientID: process.env.FTW_FB_APP_ID || 'test',
+    clientSecret: process.env.FTW_FB_APP_SECRET || 'test',
     callbackURL: 'https://ftw-app.herokuapp.com/login/facebook/return'
 },
     function (accessToken, refreshToken, profile, cb) {
