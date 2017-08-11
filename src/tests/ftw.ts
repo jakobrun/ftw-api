@@ -1,7 +1,26 @@
-import { applyCommand, applyEvent, nullState } from '../model'
+import { User } from '../family'
+import { applyFoodCommand, applyFoodEvent, foodNullState } from '../model'
 import { createAssertCommand } from './assertCommands'
 
-const assertCommands = createAssertCommand({ applyCommand, applyEvent, nullState })
+const member = {
+    id: '987',
+    name: 'Tester'
+}
+
+const user: User = {
+    member: member,
+    family: {
+        id: '32784',
+        members: [member]
+    }
+}
+
+const assertCommands = createAssertCommand({ 
+    applyCommand: applyFoodCommand, 
+    applyEvent: applyFoodEvent,
+    nullState: foodNullState,
+    user: user
+})
 
 describe('ftw', () => {
     it('should add food', () => assertCommands({

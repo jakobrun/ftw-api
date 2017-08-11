@@ -1,8 +1,21 @@
-import { applyCommand, applyEvent, nullState } from '../family'
+import { applyCommand, applyEvent, nullState, User } from '../family'
 
 import { createAssertCommand } from './assertCommands'
 
-const assertCommands = createAssertCommand({ applyCommand, applyEvent, nullState })
+const member = {
+    id: '987',
+    name: 'Tester'
+}
+
+const user: User = {
+    member: member,
+    family: {
+        id: '32784',
+        members: [member]
+    }
+}
+
+const assertCommands = createAssertCommand({ applyCommand, applyEvent, nullState, user })
 
 describe('family', () => {
     it('should add family', () => assertCommands({

@@ -1,3 +1,4 @@
+import { User } from './family'
 import { DomainEvent, ApplyEvent } from './events'
 export interface Food {
     id: string
@@ -5,13 +6,13 @@ export interface Food {
     active: boolean
 }
 
-export const nullState: Food = {
+export const foodNullState: Food = {
     id: '',
     name: '',
     active: false
 }
 
-export type ApplyCommand = (state: Food, commands: Command) => Promise<DomainEvent<any>[]>
+export type ApplyCommand = (user: User, state: Food, commands: FoodCommand) => Promise<DomainEvent<any>[]>
 
 export interface AddFoodCommand {
     type: 'addFood'
@@ -32,9 +33,9 @@ export interface DeleteFoodCommand {
     aggregateId: string
 }
 
-export type Command = AddFoodCommand | RenameFoodCommand | DeleteFoodCommand
+export type FoodCommand = AddFoodCommand | RenameFoodCommand | DeleteFoodCommand
 
-export const applyCommand: ApplyCommand = (state, command) => {
+export const applyFoodCommand: ApplyCommand = (user, state, command) => {
     switch (command.type) {
         case 'addFood':
             return Promise.resolve([{
@@ -70,7 +71,7 @@ export const applyCommand: ApplyCommand = (state, command) => {
     }
 }
 
-export const applyEvent: ApplyEvent<Food> = (state, event) => {
+export const applyFoodEvent: ApplyEvent<Food> = (state, event) => {
     switch (event.type) {
         case 'foodAdded':
             return {

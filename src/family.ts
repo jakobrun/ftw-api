@@ -1,13 +1,18 @@
 import { DomainEvent, ApplyEvent } from './events'
 
-export interface User {
+export interface Member {
     name: string
     id: string
 }
 
 export interface Family {
     id: string
-    members: User[]
+    members: Member[]
+}
+
+export interface User {
+    member: Member
+    family: Family
 }
 
 export const nullState: Family = {
@@ -39,9 +44,9 @@ export interface RemoveMemberFromFamilyCommand {
 
 export type Command = AddFamilyCommand | AddMemberToFamilyCommand | RemoveMemberFromFamilyCommand
 
-export type ApplyFamilyCommand = (state: Family, commands: Command) => Promise<DomainEvent<any>[]>
+export type ApplyFamilyCommand = (user: User, state: Family, commands: Command) => Promise<DomainEvent<any>[]>
 
-export const applyCommand: ApplyFamilyCommand = (state, command) => {
+export const applyCommand: ApplyFamilyCommand = (user, state, command) => {
     switch (command.type) {
         case 'addFamily':
             return Promise.resolve([{

@@ -1,12 +1,7 @@
 import { expect } from 'chai'
+import { EventModel } from '../commands'
 import { DomainEvent, ApplyEvent } from '../events'
 
-export type ApplyCommand<S, C> = (state: S, command: C) => Promise<DomainEvent<any>[]>
-export interface EventModel<S, C> {
-    applyCommand: ApplyCommand<S, C>
-    applyEvent: ApplyEvent<any>
-    nullState: S
-}
 export interface AssertCommandParams<C> {
     before: DomainEvent<any>[]
     commands: C[]
@@ -29,7 +24,7 @@ export const createAssertCommand = <S, C>(model: EventModel<S, C>): AssertComman
         try {
             await params.commands.reduce(async (statePromise, command) => {
                 const currentState = await statePromise
-                const evt = await model.applyCommand(currentState, command)
+                const evt = await model.applyCommand(model.user, currentState, command)
                 evt.map(e => newEvents.push(e))
                 return evt.reduce(model.applyEvent, currentState)
             }, Promise.resolve(state))
