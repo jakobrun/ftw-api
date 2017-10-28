@@ -22,7 +22,7 @@ passport.use(
         {
             clientID: process.env.FTW_FB_APP_ID || 'test',
             clientSecret: process.env.FTW_FB_APP_SECRET || 'test',
-            callbackURL: 'https://ftw-app.herokuapp.com/user',
+            callbackURL: 'https://ftw-app.herokuapp.com/login/facebook/return',
             profileFields: ['id', 'displayName', 'photos', 'email'],
         },
         function(accessToken, refreshToken, profile, cb) {
@@ -71,7 +71,14 @@ export const createApp = (db: pgPromise.IDatabase<any>) => {
             scope: ['email', 'user_relationships'],
         })
     )
-
+    app.get(
+        '/login/facebook/return',
+        passport.authenticate('facebook', {
+            failureRedirect: '/login',
+            scope: ['email', 'user_relationships'],
+        }),
+        (req, res) => res.json(req.user)
+    )
     app.get('/user', ensureLoggedIn, (req, res) => res.json(req.user))
 
     const api = express.Router()
