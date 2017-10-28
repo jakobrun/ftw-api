@@ -9,14 +9,32 @@ const toEvent = (row: any) => ({
     aggregateId: row.aggregid.trim(),
     data: row.data,
     userid: row.userid.trim(),
-    datetime: row.stored
+    datetime: row.stored,
 })
-export const createEventStore: CreateEventStore = (db) => {
+export const createEventStore: CreateEventStore = db => {
     return {
-        persist: (events: DomainEvent<any>[]) => {
-            const cols = ['EVENTID', 'TYPE', 'AGGREGID', 'ENTITYID', 'DATA', 'USERID', 'STORED', 'NR']
+        persist: async (events: DomainEvent<any>[]) => {
+            const cols = [
+                'EVENTID',
+                'TYPE',
+                'AGGREGID',
+                'ENTITYID',
+                'DATA',
+                'USERID',
+                'STORED',
+                'NR',
+            ]
             const sql = `INSERT into event (${cols.join(',')})
-                values ${events.map((_, i) => '(' + cols.map((_, j) => '$' + (i * cols.length + j + 1)).join(',') + ')').join(',')}
+                values ${events
+                    .map(
+                        (_, i) =>
+                            '(' +
+                            cols
+                                .map((_, j) => '$' + (i * cols.length + j + 1))
+                                .join(',') +
+                            ')'
+                    )
+                    .join(',')}
             `
             const rows = events.map((e, i) => [
                 e.id,
@@ -26,17 +44,22 @@ export const createEventStore: CreateEventStore = (db) => {
                 e.data,
                 e.userid,
                 e.datetime,
-                i
+                i,
             ])
-            return db.none(sql, [].concat.apply([], rows))
+            await db.none(sql, [].concat.apply([], rows))
         },
         findByAggregateId: async (aggregateId: string) => {
-            const res = await db.manyOrNone('select * from event where aggregid=$1 order by stored, nr', [aggregateId])
+            const res = await db.manyOrNone(
+                'select * from event where aggregid=$1 order by stored, nr',
+                [aggregateId]
+            )
             return res.map(toEvent)
         },
         findAll: async () => {
-            const res = await db.manyOrNone('select * from event order by stored, nr')
+            const res = await db.manyOrNone(
+                'select * from event order by stored, nr'
+            )
             return res.map(toEvent)
-        }
+        },
     }
 }
