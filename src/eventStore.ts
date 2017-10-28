@@ -3,10 +3,11 @@ import * as pgPromise from 'pg-promise'
 
 export type CreateEventStore = (db: pgPromise.IDatabase<any>) => EventStore
 
-const toEvent = (row: any) => ({
+const toEvent = (row: any): DomainEvent<any> => ({
     id: row.eventid.trim(),
     type: row.type.trim(),
     aggregateId: row.aggregid.trim(),
+    entityId: row.entityid.trim(),
     data: row.data,
     userid: row.userid.trim(),
     datetime: row.stored,
@@ -40,7 +41,7 @@ export const createEventStore: CreateEventStore = db => {
                 e.id,
                 e.type,
                 e.aggregateId,
-                '',
+                e.entityId,
                 e.data,
                 e.userid,
                 e.datetime,
@@ -55,9 +56,10 @@ export const createEventStore: CreateEventStore = db => {
             )
             return res.map(toEvent)
         },
-        findAll: async () => {
+        findAll: async (userId, entityId) => {
             const res = await db.manyOrNone(
-                'select * from event order by stored, nr'
+                'select * from event where userid=$1 and entityid=$2 order by stored, nr',
+                [userId, entityId]
             )
             return res.map(toEvent)
         },

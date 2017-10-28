@@ -1,4 +1,3 @@
-import { User } from './family'
 import { DomainEvent, ApplyEvent } from './events'
 export interface Food {
     id: string
@@ -9,10 +8,18 @@ export interface Food {
 export const foodNullState: Food = {
     id: '',
     name: '',
-    active: false
+    active: false,
 }
 
-export type ApplyCommand = (user: User, state: Food, commands: FoodCommand) => Promise<DomainEvent<any>[]>
+export interface User {
+    id: string
+}
+
+export type ApplyCommand = (
+    user: User,
+    state: Food,
+    commands: FoodCommand
+) => Promise<DomainEvent<any>[]>
 
 export interface AddFoodCommand {
     type: 'addFood'
@@ -38,36 +45,45 @@ export type FoodCommand = AddFoodCommand | RenameFoodCommand | DeleteFoodCommand
 export const applyFoodCommand: ApplyCommand = (user, state, command) => {
     switch (command.type) {
         case 'addFood':
-            return Promise.resolve([{
-                type: 'foodAdded',
-                id: command.aggregateId,
-                aggregateId: command.aggregateId,
-                userid: '',
-                datetime: new Date(),
-                data: {
-                    name: command.name
-                }
-            }])
+            return Promise.resolve([
+                {
+                    type: 'foodAdded',
+                    id: command.aggregateId,
+                    entityId: 'food',
+                    aggregateId: command.aggregateId,
+                    userid: user.id,
+                    datetime: new Date(),
+                    data: {
+                        name: command.name,
+                    },
+                },
+            ])
         case 'renameFood':
-            return Promise.resolve([{
-                type: 'foodRenamed',
-                id: command.id,
-                aggregateId: command.aggregateId,
-                userid: '',
-                datetime: new Date(),
-                data: {
-                    name: command.name
-                }
-            }])
+            return Promise.resolve([
+                {
+                    type: 'foodRenamed',
+                    id: command.id,
+                    aggregateId: command.aggregateId,
+                    entityId: 'food',
+                    userid: user.id,
+                    datetime: new Date(),
+                    data: {
+                        name: command.name,
+                    },
+                },
+            ])
         case 'deleteFood':
-            return Promise.resolve([{
-                type: 'foodDeleted',
-                id: command.id,
-                aggregateId: command.aggregateId,
-                userid: '',
-                datetime: new Date(),
-                data: {}
-            }])        
+            return Promise.resolve([
+                {
+                    type: 'foodDeleted',
+                    id: command.id,
+                    aggregateId: command.aggregateId,
+                    entityId: 'food',
+                    userid: '',
+                    datetime: new Date(),
+                    data: {},
+                },
+            ])
     }
 }
 
@@ -77,18 +93,19 @@ export const applyFoodEvent: ApplyEvent<Food> = (state, event) => {
             return {
                 id: event.aggregateId,
                 name: event.data.name,
-                active: true
+                active: true,
             }
         case 'foodRenamed':
             return {
                 ...state,
-                name: event.data.name
+                name: event.data.name,
             }
         case 'foodDeleted':
             return {
                 ...state,
-                active: false
+                active: false,
             }
-        default: throw new Error('unknown event: ' + event.type)
+        default:
+            throw new Error('unknown event: ' + event.type)
     }
 }

@@ -1,8 +1,8 @@
 import * as express from 'express'
 import * as pgPromise from 'pg-promise'
+import { AddAuthentication } from './auth/types'
 import { createEventStore } from './eventStore'
 import { applyCommandsForAggregate } from './commands'
-import { User } from './family'
 import {
     applyFoodCommand,
     applyFoodEvent,
@@ -12,31 +12,8 @@ import {
 import { applyEvent as applyEventForFoodList } from './foodList'
 import { json } from 'body-parser'
 
-import * as passport from 'passport'
-import { Strategy } from 'passport-facebook'
 import * as cookieParser from 'cookie-parser'
 import * as expressSession from 'express-session'
-
-passport.use(
-    new Strategy(
-        {
-            clientID: process.env.FTW_FB_APP_ID || 'test',
-            clientSecret: process.env.FTW_FB_APP_SECRET || 'test',
-            callbackURL: 'https://ftw-app.herokuapp.com/login/facebook/return',
-            profileFields: ['id', 'displayName', 'photos', 'email'],
-        },
-        function(accessToken, refreshToken, profile, cb) {
-            return cb(null, profile)
-        }
-    )
-)
-passport.serializeUser(function(user, cb) {
-    cb(null, user)
-})
-
-passport.deserializeUser(function(obj, cb) {
-    cb(null, obj)
-})
 
 const ensureLoggedIn: express.RequestHandler = (req, res, next) => {
     if (!req.user) {
@@ -46,7 +23,10 @@ const ensureLoggedIn: express.RequestHandler = (req, res, next) => {
     next()
 }
 
-export const createApp = (db: pgPromise.IDatabase<any>) => {
+export const createApp = (
+    db: pgPromise.IDatabase<any>,
+    addLoginMiddlewares: AddAuthentication
+) => {
     const eventStore = createEventStore(db)
     const app = express()
     app.use(cookieParser())
@@ -58,37 +38,18 @@ export const createApp = (db: pgPromise.IDatabase<any>) => {
             saveUninitialized: true,
         })
     )
-    app.use(passport.initialize())
-    app.use(passport.session())
-
-    app.get('/login', (req, res) => {
-        res.json({ login: 'facebook', url: '/login/facebook' })
-    })
-
-    app.get(
-        '/login/facebook',
-        passport.authenticate('facebook', {
-            scope: ['email', 'user_relationships'],
-        })
-    )
-    app.get(
-        '/login/facebook/return',
-        passport.authenticate('facebook', {
-            failureRedirect: '/login',
-            scope: ['email', 'user_relationships'],
-        }),
-        (req, res) => res.json(req.user)
-    )
+    addLoginMiddlewares(app)
     app.post('/logout', (req, res) => {
         req.logout()
         res.json({ success: true })
     })
-    app.get('/user', ensureLoggedIn, (req, res) => res.json(req.user))
 
     const api = express.Router()
+    api.use(ensureLoggedIn)
+    api.get('/user', (req, res) => res.json(req.user))
     api.get('/food', async (req, res, next) => {
         try {
-            const events = await eventStore.findAll()
+            const events = await eventStore.findAll(req.user.id, 'food')
             const foodList = events.reduce(applyEventForFoodList, [])
             res.json(foodList)
         } catch (ex) {
