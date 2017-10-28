@@ -79,7 +79,7 @@ export const createApp = (db: pgPromise.IDatabase<any>) => {
         }),
         (req, res) => res.json(req.user)
     )
-    app.get('/logout', (req, res) => {
+    app.post('/logout', (req, res) => {
         req.logout()
         res.json({ success: true })
     })
