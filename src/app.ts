@@ -38,7 +38,7 @@ passport.deserializeUser(function(obj, cb) {
     cb(null, obj)
 })
 
-const ensureLoggedIn = (req: any, res: any, next: any) => {
+const ensureLoggedIn: express.RequestHandler = (req, res, next) => {
     if (!req.user) {
         res.status(401).send('Unauthorized')
         return
@@ -79,6 +79,10 @@ export const createApp = (db: pgPromise.IDatabase<any>) => {
         }),
         (req, res) => res.json(req.user)
     )
+    app.get('/logout', (req, res) => {
+        req.logout()
+        res.json({ success: true })
+    })
     app.get('/user', ensureLoggedIn, (req, res) => res.json(req.user))
 
     const api = express.Router()
