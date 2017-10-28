@@ -22,7 +22,7 @@ passport.use(
         {
             clientID: process.env.FTW_FB_APP_ID || 'test',
             clientSecret: process.env.FTW_FB_APP_SECRET || 'test',
-            callbackURL: 'https://ftw-app.herokuapp.com/login/facebook/return',
+            callbackURL: 'https://ftw-app.herokuapp.com/user',
             profileFields: ['id', 'displayName', 'photos', 'email'],
         },
         function(accessToken, refreshToken, profile, cb) {
@@ -37,6 +37,14 @@ passport.serializeUser(function(user, cb) {
 passport.deserializeUser(function(obj, cb) {
     cb(null, obj)
 })
+
+const ensureLoggedIn = (req: any, res: any, next: any) => {
+    if (!req.user) {
+        res.status(401).send('Unauthorized')
+        return
+    }
+    next()
+}
 
 export const createApp = (db: pgPromise.IDatabase<any>) => {
     const eventStore = createEventStore(db)
@@ -64,19 +72,7 @@ export const createApp = (db: pgPromise.IDatabase<any>) => {
         })
     )
 
-    app.get(
-        '/login/facebook/return',
-        passport.authenticate('facebook', {
-            failureRedirect: '/login',
-            scope: ['email', 'user_relationships'],
-        }),
-        function(req, res) {
-            console.log('user', req.user)
-            res.json(req.user)
-        }
-    )
-
-    app.get('/user', (req, res) => res.json(req.user))
+    app.get('/user', ensureLoggedIn, (req, res) => res.json(req.user))
 
     const api = express.Router()
     api.get('/food', async (req, res, next) => {
