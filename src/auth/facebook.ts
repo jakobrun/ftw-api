@@ -9,7 +9,7 @@ passport.use(
             callbackURL: 'https://ftw-app.herokuapp.com/login/facebook/return',
             profileFields: ['id', 'displayName', 'photos', 'email'],
         },
-        (accessToken, refreshToken, profile, cb) => {
+        (_accessToken, _refreshToken, profile, cb) => {
             return cb(null, profile)
         }
     )

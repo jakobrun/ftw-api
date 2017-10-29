@@ -27,7 +27,7 @@ describe('app', () => {
                 ],
             })
             .expect(200)
-            .then(res =>
+            .then(() =>
                 request(app)
                     .get('/api/v1/food')
                     .expect(200)

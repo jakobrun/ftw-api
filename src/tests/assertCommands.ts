@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 import { EventModel } from '../commands'
-import { DomainEvent, ApplyEvent } from '../events'
+import { DomainEvent } from '../events'
 
 export interface AssertCommandParams<C> {
     before: Partial<DomainEvent<any>>[]

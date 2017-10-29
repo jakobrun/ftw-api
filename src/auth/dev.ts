@@ -15,7 +15,7 @@ export const setUser = (user: any) => {
     currentUser = user
 }
 export const addAuthentication: AddAuthentication = app => {
-    app.use((req, res, next) => {
+    app.use((req, _, next) => {
         req.user = currentUser
         next()
     })

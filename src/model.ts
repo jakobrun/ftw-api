@@ -41,7 +41,7 @@ export interface DeleteFoodCommand {
 
 export type FoodCommand = AddFoodCommand | RenameFoodCommand | DeleteFoodCommand
 
-export const applyFoodCommand: ApplyCommand = (user, state, command) => {
+export const applyFoodCommand: ApplyCommand = (user, _state, command) => {
     switch (command.type) {
         case 'addFood':
             return Promise.resolve([

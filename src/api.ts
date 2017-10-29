@@ -7,12 +7,16 @@ import {
     FoodCommand,
     foodNullState,
     Food,
+    User,
 } from './model'
 import { applyEvent as applyEventForFoodList } from './foodList'
 
 export interface Api {
-    food: (user: any) => Promise<Food[]>
-    applyFoodCommands: (foodCommands: FoodCommand[], user: any) => Promise<void>
+    food: (user: User) => Promise<Food[]>
+    applyFoodCommands: (
+        foodCommands: FoodCommand[],
+        user: User
+    ) => Promise<void>
 }
 export const createApi = (db: pgPromise.IDatabase<any>): Api => {
     const eventStore = createEventStore(db)

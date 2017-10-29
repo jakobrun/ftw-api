@@ -5,8 +5,6 @@ import {
     GraphQLNonNull,
     GraphQLString,
     GraphQLBoolean,
-    GraphQLInputObjectType,
-    GraphQLUnionType,
 } from 'graphql'
 import { AddFoodCommand, RenameFoodCommand, DeleteFoodCommand } from './model'
 import { Api } from './api'
@@ -36,11 +34,6 @@ const FoodResultType = new GraphQLObjectType({
     },
 })
 
-const delay = (t: number) =>
-    new Promise(resolve => {
-        setTimeout(resolve, t)
-    })
-
 export const createSchema = (api: Api) =>
     new GraphQLSchema({
         query: new GraphQLObjectType({
@@ -48,7 +41,7 @@ export const createSchema = (api: Api) =>
             fields: {
                 food: {
                     type: new GraphQLList(FoodType),
-                    resolve: (_, args, req) => api.food(req.user),
+                    resolve: (_, _args, req) => api.food(req.user),
                 },
             },
         }),
