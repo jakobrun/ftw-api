@@ -25,10 +25,8 @@ describe('ftw', () => {
             ],
             after: [
                 {
-                    id: '1',
                     aggregateId: '1',
                     userid: user.id,
-                    datetime: new Date(),
                     entityId: 'food',
                     type: 'foodAdded',
                     data: {
@@ -41,11 +39,9 @@ describe('ftw', () => {
         assertCommands({
             before: [
                 {
-                    id: '1',
                     aggregateId: '1',
                     entityId: 'food',
                     userid: user.id,
-                    datetime: new Date(),
                     type: 'foodAdded',
                     data: {
                         name: 'Pasta',
@@ -55,18 +51,15 @@ describe('ftw', () => {
             commands: [
                 {
                     type: 'renameFood',
-                    id: '2',
                     aggregateId: '1',
                     name: 'Pizza',
                 },
             ],
             after: [
                 {
-                    id: '2',
                     aggregateId: '1',
                     userid: user.id,
                     entityId: 'food',
-                    datetime: new Date(),
                     type: 'foodRenamed',
                     data: {
                         name: 'Pizza',
@@ -79,11 +72,9 @@ describe('ftw', () => {
         assertCommands({
             before: [
                 {
-                    id: '1',
                     aggregateId: '1',
                     entityId: 'food',
                     userid: '',
-                    datetime: new Date(),
                     type: 'foodAdded',
                     data: {
                         name: 'Pasta',
@@ -93,17 +84,14 @@ describe('ftw', () => {
             commands: [
                 {
                     type: 'deleteFood',
-                    id: '2',
                     aggregateId: '1',
                 },
             ],
             after: [
                 {
-                    id: '2',
                     aggregateId: '1',
                     entityId: 'food',
                     userid: '',
-                    datetime: new Date(),
                     type: 'foodDeleted',
                     data: {},
                 },

@@ -1,4 +1,5 @@
 import { DomainEvent, ApplyEvent } from './events'
+import { v4 as uuid } from 'uuid'
 export interface Food {
     id: string
     name: string
@@ -29,14 +30,12 @@ export interface AddFoodCommand {
 
 export interface RenameFoodCommand {
     type: 'renameFood'
-    id: string
     aggregateId: string
     name: string
 }
 
 export interface DeleteFoodCommand {
     type: 'deleteFood'
-    id: string
     aggregateId: string
 }
 
@@ -48,7 +47,7 @@ export const applyFoodCommand: ApplyCommand = (user, state, command) => {
             return Promise.resolve([
                 {
                     type: 'foodAdded',
-                    id: command.aggregateId,
+                    id: uuid(),
                     entityId: 'food',
                     aggregateId: command.aggregateId,
                     userid: user.id,
@@ -62,7 +61,7 @@ export const applyFoodCommand: ApplyCommand = (user, state, command) => {
             return Promise.resolve([
                 {
                     type: 'foodRenamed',
-                    id: command.id,
+                    id: uuid(),
                     aggregateId: command.aggregateId,
                     entityId: 'food',
                     userid: user.id,
@@ -76,10 +75,10 @@ export const applyFoodCommand: ApplyCommand = (user, state, command) => {
             return Promise.resolve([
                 {
                     type: 'foodDeleted',
-                    id: command.id,
+                    id: uuid(),
                     aggregateId: command.aggregateId,
                     entityId: 'food',
-                    userid: '',
+                    userid: user.id,
                     datetime: new Date(),
                     data: {},
                 },
