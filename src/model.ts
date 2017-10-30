@@ -110,30 +110,30 @@ export const applyFoodEvent: ApplyEvent<Food> = (state, event) => {
     }
 }
 
-export interface IFoodForDay {
+export interface IMeal {
     id: string
     name: string
 }
 
-export interface IDay {
+export interface IDayMenu {
     date: Date
-    food?: IFoodForDay
+    dinner?: IMeal
 }
 
-export const dayNullState: IDay = {
+export const dayNullState: IDayMenu = {
     date: new Date('1900-01-01'),
 }
 
-export interface ISelectFoodForDayCommand {
-    type: 'selectFoodForDay'
+export interface ISelectDinnerCommand {
+    type: 'selectDinner'
     foodId: string
     date: Date
 }
 
 export type ApplyFoodForDayCommand = (
     user: User,
-    state: IDay,
-    command: ISelectFoodForDayCommand
+    state: IDayMenu,
+    command: ISelectDinnerCommand
 ) => Promise<DomainEvent<any>[]>
 
 export const createApplyFoodForDayCommand = (
@@ -145,7 +145,7 @@ export const createApplyFoodForDayCommand = (
     }
     return [
         {
-            type: 'foodSelectedForDay',
+            type: 'dinnerSelected',
             id: uuid(),
             aggregateId: command.date.toISOString().substring(0, 10),
             entityId: 'foodForDay',
@@ -159,12 +159,12 @@ export const createApplyFoodForDayCommand = (
     ]
 }
 
-export const applyFoodForDayEvent: ApplyEvent<IDay> = (_state, event) => {
+export const applyDayMenuEvent: ApplyEvent<IDayMenu> = (_state, event) => {
     switch (event.type) {
-        case 'foodSelectedForDay':
+        case 'dinnerSelected':
             return {
                 date: new Date(event.aggregateId),
-                food: {
+                dinner: {
                     id: event.data.foodId,
                     name: event.data.foodName,
                 },

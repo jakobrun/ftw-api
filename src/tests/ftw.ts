@@ -3,7 +3,7 @@ import {
     applyFoodEvent,
     foodNullState,
     createApplyFoodForDayCommand,
-    applyFoodForDayEvent,
+    applyDayMenuEvent,
     dayNullState,
     Food,
 } from '../model'
@@ -120,7 +120,7 @@ describe('food for day', () => {
     }
     const assertCommands = createAssertCommand({
         applyCommand: createApplyFoodForDayCommand(findFood),
-        applyEvent: applyFoodForDayEvent,
+        applyEvent: applyDayMenuEvent,
         nullState: dayNullState,
         user: user,
     })
@@ -129,7 +129,7 @@ describe('food for day', () => {
             before: [],
             commands: [
                 {
-                    type: 'selectFoodForDay',
+                    type: 'selectDinner',
                     foodId: 'pasta',
                     date: new Date('2017-10-29'),
                 },
@@ -139,7 +139,7 @@ describe('food for day', () => {
                     aggregateId: '2017-10-29',
                     entityId: 'foodForDay',
                     userid: user.id,
-                    type: 'foodSelectedForDay',
+                    type: 'dinnerSelected',
                     data: {
                         foodId: 'pasta',
                         foodName: 'Pasta',
@@ -153,7 +153,7 @@ describe('food for day', () => {
             before: [],
             commands: [
                 {
-                    type: 'selectFoodForDay',
+                    type: 'selectDinner',
                     foodId: 'bla',
                     date: new Date('2017-10-29'),
                 },

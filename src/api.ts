@@ -5,11 +5,11 @@ import {
     applyFoodCommand,
     applyFoodEvent,
     FoodCommand,
-    ISelectFoodForDayCommand,
+    ISelectDinnerCommand,
     foodNullState,
     FindFoodById,
     createApplyFoodForDayCommand,
-    applyFoodForDayEvent,
+    applyDayMenuEvent,
     dayNullState,
     Food,
     User,
@@ -24,7 +24,7 @@ export interface Api {
         user: User
     ) => Promise<void>
     applyFoodForDayCommand: (
-        command: ISelectFoodForDayCommand,
+        command: ISelectDinnerCommand,
         user: User
     ) => Promise<void>
 }
@@ -44,7 +44,7 @@ export const createApi = (db: pgPromise.IDatabase<any>): Api => {
         applyFoodForDayCommand: async (command, user) => {
             const aggreateId = command.date.toISOString().substring(0, 10)
             const events = await eventStore.findByAggregateId(aggreateId)
-            const state = events.reduce(applyFoodForDayEvent, dayNullState)
+            const state = events.reduce(applyDayMenuEvent, dayNullState)
             const newEvents = await applyFoodForDayCommand(user, state, command)
             await eventStore.persist(newEvents)
         },
