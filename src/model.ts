@@ -116,12 +116,12 @@ export interface IMeal {
 }
 
 export interface IDayMenu {
-    date: Date
+    date: string
     dinner?: IMeal
 }
 
 export const dayNullState: IDayMenu = {
-    date: new Date('1900-01-01'),
+    date: '1900-01-01',
 }
 
 export interface ISelectDinnerCommand {
@@ -148,12 +148,12 @@ export const createApplyFoodForDayCommand = (
             type: 'dinnerSelected',
             id: uuid(),
             aggregateId: command.date.toISOString().substring(0, 10),
-            entityId: 'foodForDay',
+            entityId: 'dayMenu',
             userid: user.id,
             datetime: new Date(),
             data: {
-                foodId: food.id,
-                foodName: food.name,
+                id: food.id,
+                name: food.name,
             },
         },
     ]
@@ -163,11 +163,8 @@ export const applyDayMenuEvent: ApplyEvent<IDayMenu> = (_state, event) => {
     switch (event.type) {
         case 'dinnerSelected':
             return {
-                date: new Date(event.aggregateId),
-                dinner: {
-                    id: event.data.foodId,
-                    name: event.data.foodName,
-                },
+                date: event.aggregateId,
+                dinner: event.data,
             }
         default:
             throw new Error('unknown event: ' + event.type)

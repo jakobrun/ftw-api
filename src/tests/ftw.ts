@@ -124,7 +124,7 @@ describe('food for day', () => {
         nullState: dayNullState,
         user: user,
     })
-    it('should select food for day', () =>
+    it('should select dinner°', () =>
         assertCommands({
             before: [],
             commands: [
@@ -137,12 +137,12 @@ describe('food for day', () => {
             after: [
                 {
                     aggregateId: '2017-10-29',
-                    entityId: 'foodForDay',
+                    entityId: 'dayMenu',
                     userid: user.id,
                     type: 'dinnerSelected',
                     data: {
-                        foodId: 'pasta',
-                        foodName: 'Pasta',
+                        id: 'pasta',
+                        name: 'Pasta',
                     },
                 },
             ],
