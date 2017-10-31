@@ -5,6 +5,7 @@ import {
     applyFoodCommand,
     applyFoodEvent,
     FoodCommand,
+    IDayMenu,
     ISelectDinnerCommand,
     foodNullState,
     FindFoodById,
@@ -15,14 +16,21 @@ import {
     User,
 } from './model'
 import { applyEvent as applyEventForFoodList } from './foodList'
+import { applyEvent as applyDayMenuevent } from './dayMenuList'
 
 export interface Api {
     food: (user: User) => Promise<Food[]>
     findFoodById: FindFoodById
+    findDayMenyForPeriod: (
+        from: string,
+        to: string,
+        user: User
+    ) => Promise<IDayMenu[]>
     applyFoodCommands: (
         foodCommands: FoodCommand[],
         user: User
     ) => Promise<void>
+
     applyFoodForDayCommand: (
         command: ISelectDinnerCommand,
         user: User
@@ -41,6 +49,20 @@ export const createApi = (db: pgPromise.IDatabase<any>): Api => {
             return events.reduce(applyEventForFoodList, [])
         },
         findFoodById,
+        findDayMenyForPeriod: async (from, to, user) => {
+            const events = await eventStore.findBetween(from, to, user.id)
+            const initalState: IDayMenu[] = []
+            const currentDate = new Date(from)
+            const toDate = new Date(to)
+            while (currentDate < toDate) {
+                initalState.push({
+                    date: currentDate.toISOString().substring(0, 10),
+                })
+                currentDate.setDate(currentDate.getDate() + 1)
+            }
+            const state = events.reduce(applyDayMenuevent, initalState)
+            return state
+        },
         applyFoodForDayCommand: async (command, user) => {
             const aggreateId = command.date.toISOString().substring(0, 10)
             const events = await eventStore.findByAggregateId(aggreateId)

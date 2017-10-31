@@ -56,6 +56,13 @@ export const createEventStore: CreateEventStore = db => {
             )
             return res.map(toEvent)
         },
+        findBetween: async (aggregateFrom, aggregateTo, userId) => {
+            const res = await db.manyOrNone(
+                'select * from event where aggregid between $1 and $2 and userid=$3 order by stored, nr',
+                [aggregateFrom, aggregateTo, userId]
+            )
+            return res.map(toEvent)
+        },
         findAll: async (userId, entityId) => {
             const res = await db.manyOrNone(
                 'select * from event where userid=$1 and entityid=$2 order by stored, nr',

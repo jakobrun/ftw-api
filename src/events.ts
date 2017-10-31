@@ -1,5 +1,10 @@
 export interface EventStore {
     findByAggregateId: (aggregateId: string) => Promise<DomainEvent<any>[]>
+    findBetween: (
+        aggregateFrom: string,
+        aggregateTo: string,
+        userId: string
+    ) => Promise<DomainEvent<any>[]>
     findAll: (userId: string, entityId: string) => Promise<DomainEvent<any>[]>
     persist: (events: DomainEvent<any>[]) => Promise<void>
 }
