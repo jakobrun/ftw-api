@@ -2,7 +2,7 @@ import { DomainEvent } from '../events'
 import { applyEvent } from '../dayMenuList'
 import { expect } from 'chai'
 
-describe('food list', () => {
+describe('day menu list', () => {
     const pasta = {
         id: '1',
         name: 'Pasta',
