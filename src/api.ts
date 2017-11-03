@@ -61,7 +61,14 @@ export const createApi = (db: pgPromise.IDatabase<any>): Api => {
                 currentDate.setDate(currentDate.getDate() + 1)
             }
             const state = events.reduce(applyDayMenuevent, initalState)
-            return state
+            return state.sort((a, b) => {
+                if (a.date > b.date) {
+                    return -1
+                } else if (a.date < b.date) {
+                    return 1
+                }
+                return 0
+            })
         },
         applyFoodForDayCommand: async (command, user) => {
             const aggreateId = command.date.toISOString().substring(0, 10)
