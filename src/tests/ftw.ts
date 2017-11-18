@@ -42,6 +42,19 @@ describe('food', () => {
                 },
             ],
         }))
+    it('should throw error if name is empty', () =>
+        assertCommands({
+            before: [],
+            commands: [
+                {
+                    type: 'addFood',
+                    aggregateId: '1',
+                    name: '',
+                },
+            ],
+            after: [],
+            errorMessage: 'Name is required',
+        }))
     it('should rename food', () =>
         assertCommands({
             before: [

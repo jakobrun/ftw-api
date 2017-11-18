@@ -42,9 +42,15 @@ export type ApplyFoodCommand = (
     command: FoodCommand
 ) => Promise<DomainEvent<any>[]>
 
+const trim = (str?: string): string => (str ? str.trim() : '')
+
 export const applyFoodCommand: ApplyFoodCommand = (user, _state, command) => {
     switch (command.type) {
-        case 'addFood':
+        case 'addFood': {
+            const name = trim(command.name)
+            if (!name) {
+                throw new Error('Name is required')
+            }
             return Promise.resolve([
                 {
                     type: 'foodAdded',
@@ -58,6 +64,7 @@ export const applyFoodCommand: ApplyFoodCommand = (user, _state, command) => {
                     },
                 },
             ])
+        }
         case 'renameFood':
             return Promise.resolve([
                 {
